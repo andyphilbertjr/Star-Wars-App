@@ -16,7 +16,8 @@ function Characters(props){
             .then( response => response.json() )
             .then( data => {
               let filmContainer = document.getElementById(props.name)
-                    return filmContainer.appendChild(`${displayCharacters(data.title, data.release_date)}`)
+              let characterInfo = displayCharacters(data.title, data.release_date)
+                    return filmContainer.appendChild(characterInfo)
             })
   }
 
@@ -53,8 +54,7 @@ class App extends Component {
   }
   
   getCharacters(){
-    return charactersData.characters.map( (item , key) => {
-
+    return charactersData.characters.map( item => {
       return <Characters key={item.name} name={item.name} url={item.url}/>
     }) 
     }
