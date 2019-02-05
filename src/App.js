@@ -4,18 +4,37 @@ const charactersData = require('./characters.json')
 
 
 function Characters(props){
+  function displayCharacters(title, release){
+
+    let infoContainer = document.createElement('div')
+    let infoText = document.createTextNode(`title: ${title}, release date: ${release}`)
+    return infoContainer.appendChild(infoText)
+  }
+
+  function getFilmData(filmUrl){
+    return fetch(filmUrl)
+            .then( response => response.json() )
+            .then( data => {
+              let filmContainer = document.getElementById(props.name)
+                    return filmContainer.appendChild(`${displayCharacters(data.title, data.release_date)}`)
+            })
+  }
+
   function getData(){
     return fetch(props.url)
             .then( response => response.json() )
-            .then( data => document.getElementById(props.name)
-                            .innerHTML = `<div>${JSON.stringify(data.films)}</div>`)
+            .then( data => {
+              data.films.forEach( film => getFilmData(film) )
+            }) 
   }
 
   return (
           <div>
             <div className='characterCards'>
               {props.name}
+              <div>
               <button onClick={getData}>Pick Character</button>
+              </div>
             </div>
             <div id={props.name} className='characterDetails'>
             </div>
@@ -44,6 +63,9 @@ class App extends Component {
     return (
       <div>
         {this.getCharacters()}
+        <div id='test'>
+
+        </div>
       </div>
     );
   }
