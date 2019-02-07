@@ -5,10 +5,25 @@ const charactersData = require('./characters.json')
 
 
 function Characters(props){
+  let onDisplay = false
   function handleClick(){
-    props.films.forEach( film => {
-      document.getElementById(props.name).insertAdjacentText('beforeend', `Title: ${film.title} , Release Date: ${film.releaseDate}`)
-    })
+
+    if(!onDisplay){
+      onDisplay = true
+      let movieWrapper = document.getElementById(props.url)
+      let movieSubHeaderText = document.createTextNode('Movies List:')
+      let moviesListHeader = movieWrapper.appendChild(movieSubHeaderText)
+      document.getElementById(props.url).prepend(moviesListHeader)
+
+      return props.films.forEach( film => {
+        movieWrapper.insertAdjacentHTML('beforeend',
+        `<li>Title: ${film.title} & Released On: ${film.releaseDate}</li>
+        `)
+      })
+    } 
+    onDisplay = false
+
+    return document.getElementById(props.url).innerHTML = ''
   }
 
   return (
@@ -18,11 +33,13 @@ function Characters(props){
                 <Typography variant='display2'>
                   {props.name}
                 </Typography>
-                <Typography id={props.name} variant='display1'>
-                  Test
+                <Typography id={props.name} component='article'>
+                  <ul id={props.url}>
+
+                  </ul>
                 </Typography>
                 <CardActions>
-                  <Button variant='contained' color='primary' onClick={handleClick}>Pick Character</Button>
+                  <Button variant='contained' color='primary' onClick={handleClick}>List Movies</Button>
                 </CardActions>
               </CardContent>
             </Card>
@@ -46,16 +63,6 @@ class App extends Component {
         filmData: []
       }))
   }
-
-  // displayFilmInfo(e){
-  //   let filmsWrapper = document.createElement('ul')
-  //   document.getElementById(this.characters.name).insertAdjacentHTML('beforeend', 
-  //   `<li>
-  //     ${this.characters.forEach( film => {
-  //       `Title: ${film}`
-  //     })}
-  //   </li>`)
-  // }
 
   getCharacterData(){
     this.characters.forEach( character => 
