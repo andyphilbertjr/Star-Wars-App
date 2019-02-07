@@ -1,47 +1,30 @@
 import React, { Component } from 'react';
 import './App.css';
-import { CardActions, Card, Button, Typography } from '@material-ui/core';
+import { CardActions, Card, Button, Typography, CardContent } from '@material-ui/core';
 const charactersData = require('./characters.json')
 
 
 function Characters(props){
-  function displayCharacters(title, release){
-      release = new Date(release)
-      let infoContainer = document.createElement('div')
-      let infoText = document.createTextNode(`Title: ${title}, Release Date: ${release.toDateString()}`)
-      infoText.nodeValue.replace(',', '<br />')
-      return infoContainer.appendChild(infoText)
-    }
-
-  function getFilmData(filmUrl){
-      return fetch(filmUrl)
-              .then( response => response.json() )
-              .then( data => {
-                let filmContainer = document.getElementById(props.name)
-                let characterInfo = displayCharacters(data.title,data.release_date)
-                      return filmContainer.insertAdjacentHTML('beforeend',  `<div>${characterInfo.nodeValue}</div>`)
-              })
-    }
-
-    function getData(){
-      return fetch(props.url)
-              .then( response => response.json() )
-              .then( data => {
-                data.films.forEach( film => getFilmData(film) )
-              }) 
-    }
+  function handleClick(){
+    props.films.forEach( film => {
+      document.getElementById(props.name).insertAdjacentText('beforeend', `Title: ${film.title} , Release Date: ${film.releaseDate}`)
+    })
+  }
 
   return (
           <div>
             <Card>
-              <Typography variant='display2'>
-                {props.name}
-              </Typography>
-              <div id={props.name} className='characterDetails'>
-              </div>
-              <CardActions>
-                <Button variant='contained' color='primary' onClick={getData}>Pick Character</Button>
-              </CardActions>
+              <CardContent>
+                <Typography variant='display2'>
+                  {props.name}
+                </Typography>
+                <Typography id={props.name} variant='display1'>
+                  Test
+                </Typography>
+                <CardActions>
+                  <Button variant='contained' color='primary' onClick={handleClick}>Pick Character</Button>
+                </CardActions>
+              </CardContent>
             </Card>
 
           </div>
@@ -54,17 +37,59 @@ function Characters(props){
 class App extends Component {
   constructor(props){
     super(props)
-    this.getCharacters = this.getCharacters.bind(this)
-   // this.getData = this.getData.bind(this)
+    this.displayCharacterCards = this.displayCharacterCards.bind(this)
+    this.getCharacterData = this.getCharacterData.bind(this)
+    this.characters = charactersData.characters.map( character => 
+      ({name: character.name, 
+        characterUrl: character.url, 
+        filmUrls: '',
+        filmData: []
+      }))
+  }
+
+  // displayFilmInfo(e){
+  //   let filmsWrapper = document.createElement('ul')
+  //   document.getElementById(this.characters.name).insertAdjacentHTML('beforeend', 
+  //   `<li>
+  //     ${this.characters.forEach( film => {
+  //       `Title: ${film}`
+  //     })}
+  //   </li>`)
+  // }
+
+  getCharacterData(){
+    this.characters.forEach( character => 
+      fetch( character.characterUrl )
+        .then( response => response.json() )
+        .then( data => 
+          character.filmUrls = data.films  
+          ).then ( filmUrls => 
+            filmUrls.forEach( url => {
+              fetch( url )
+                .then( response => response.json() )
+                .then( data => {
+                  data.release_date = new Date( data.release_date )
+                    character.filmData.push({title : data.title, releaseDate: data.release_date.toDateString()})
+                })
+            })
+
+          )
+      )
   }
   
-  getCharacters(){
-    return charactersData.characters.map( item => {
-      return <Characters key={item.name} name={item.name} url={item.url}/>
-    }) 
-    }
+
+  displayCharacterCards(){
+    return this.characters.map( person => {
+      return <Characters key={person.name} 
+                name={person.name} 
+                url={person.characterUrl} 
+                characterInfo={this.displayFilmInfo} 
+                films={person.filmData}/>
+  })
+}
 
   render() {
+    this.getCharacterData()
     return (
       <div>
         <header>
@@ -72,7 +97,7 @@ class App extends Component {
             Star Wars App
           </Typography>
         </header>
-        {this.getCharacters()}
+        {this.displayCharacterCards()}
       </div>
     );
   }
