@@ -33,6 +33,7 @@ class App extends Component {
                 })
             })
 
+          ).catch(error => console.log('Movie List Unavailable')
           )
       )
   }
@@ -42,7 +43,6 @@ class App extends Component {
       return <Characters key={person.name} 
                 name={person.name} 
                 url={person.characterUrl} 
-                characterInfo={this.displayFilmInfo} 
                 films={person.filmData}/>
   })
 }
@@ -52,7 +52,7 @@ class App extends Component {
     return (
       <div>
         <header>
-          <Typography variant={"display4"}>
+          <Typography variant={"display3"}>
             Star Wars App
           </Typography>
         </header>

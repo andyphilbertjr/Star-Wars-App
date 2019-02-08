@@ -1,9 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { CardActions, Card, Button, Typography, CardContent } from '@material-ui/core';
-
 function Characters(props){
   let onDisplay = false
+  
   function handleClick(){
+    console.log()
     if(!onDisplay){
       onDisplay = true
       let movieWrapper = document.getElementById(props.url)
@@ -44,5 +45,4 @@ function Characters(props){
 
           )
 } 
-
 export default Characters
