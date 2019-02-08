@@ -3,24 +3,53 @@ import { CardActions, Card, Button, Typography, CardContent } from '@material-ui
 function Characters(props){
   let onDisplay = false
   
-  function handleClick(){
-    console.log()
+
+  function getCharacterData(){
+    return props.characterInfo.forEach( character => {
+      if(props.name === character.name){
+        fetch( character.characterUrl)
+        .then( response => response.json() )
+        .then( data => {
+          character.filmUrls.push(data.films)  
+          return data.films
+        }).then ( filmUrls => {
+            filmUrls.forEach( url => {
+              fetch( url )
+                .then( response => response.json() )
+                .then( data => {
+                  data.release_date = new Date( data.release_date )
+                  character.filmData.push({title : data.title, releaseDate: data.release_date.toDateString()})
+                })
+             })
+          })
+      }
+
+        })
+  }
+
+
+  async function handleClick(){
+    await getCharacterData()
     if(!onDisplay){
       onDisplay = true
       let movieWrapper = document.getElementById(props.url)
       let movieSubHeaderText = document.createTextNode('Movies List:')
       let moviesListHeader = movieWrapper.appendChild(movieSubHeaderText)
       document.getElementById(props.url).prepend(moviesListHeader)
+      let filmList = props.characterInfo.find( character => {
+        if(character === props.name){
+          return character.filmData.map( films => {
+            return `<li>Title: ${films.title} & Released On: ${films.releaseDate}</li>`
+          })
+        }
 
-      return props.films.forEach( film => {
-        movieWrapper.insertAdjacentHTML('beforeend',
-        `<li>Title: ${film.title} & Released On: ${film.releaseDate}</li>
-        `)
       })
+      //console.log(filmList)
+      return document.getElementById(props.url).innerHTML= filmList
     } 
     
     onDisplay = false
-    return document.getElementById(props.url).innerHTML = ''
+    //return document.getElementById(props.url).innerHTML = ''
   }
 
   return (
@@ -36,11 +65,12 @@ function Characters(props){
                   </ul>
                 </Typography>
                 <CardActions>
-                  <Button variant='contained' color='primary' onClick={handleClick}>List Movies</Button>
+                  <div onClick={handleClick}  value={props.name}>
+                  <Button component='button' variant='contained' color='primary'>List Movies</Button>
+                  </div>
                 </CardActions>
               </CardContent>
             </Card>
-
           </div>
 
           )
