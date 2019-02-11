@@ -8,7 +8,6 @@ class App extends Component {
   constructor(props){
     super(props)
     this.displayCharacterCards = this.displayCharacterCards.bind(this)
-    //this.getCharacterData = this.getCharacterData.bind(this)
     this.characters = charactersData.characters.map( character => 
       ({name: character.name, 
         characterUrl: character.url, 
@@ -17,26 +16,6 @@ class App extends Component {
       }))
   }
 
-  // getCharacterData(){
-  //   this.characters.forEach( character => 
-  //     fetch( character.characterUrl )
-  //       .then( response => response.json() )
-  //       .then( data => 
-  //         character.filmUrls = data.films  
-  //         ).then ( filmUrls => 
-  //           filmUrls.forEach( url => {
-  //             fetch( url )
-  //               .then( response => response.json() )
-  //               .then( data => {
-  //                 data.release_date = new Date( data.release_date )
-  //                   character.filmData.push({title : data.title, releaseDate: data.release_date.toDateString()})
-  //               })
-  //           })
-
-  //         ).catch( error => console.error('Movie List Unavailable')
-  //         )
-  //     )
-  // }
   
   displayCharacterCards(){
     return this.characters.map( person => {

@@ -4,9 +4,10 @@ function Characters(props){
   let onDisplay = false
   
 
-  function getCharacterData(){
-    return props.characterInfo.forEach( character => {
+  function handleClick(){
+    props.characterInfo.forEach( character => {
       if(props.name === character.name){
+        if(character.filmData.length <= 1){
         fetch( character.characterUrl)
         .then( response => response.json() )
         .then( data => {
@@ -19,37 +20,47 @@ function Characters(props){
                 .then( data => {
                   data.release_date = new Date( data.release_date )
                   character.filmData.push({title : data.title, releaseDate: data.release_date.toDateString()})
-                })
-             })
-          })
-      }
+                }).then(() => showCharacterData())
+              })
 
-        })
+          })
+        } else {
+          showCharacterData()
+        }
+      }
+    })
+
   }
 
 
-  async function handleClick(){
-    await getCharacterData()
-    if(!onDisplay){
-      onDisplay = true
-      let movieWrapper = document.getElementById(props.url)
-      let movieSubHeaderText = document.createTextNode('Movies List:')
-      let moviesListHeader = movieWrapper.appendChild(movieSubHeaderText)
-      document.getElementById(props.url).prepend(moviesListHeader)
-      let filmList = props.characterInfo.find( character => {
-        if(character === props.name){
-          return character.filmData.map( films => {
-            return `<li>Title: ${films.title} & Released On: ${films.releaseDate}</li>`
-          })
-        }
+async function showCharacterData(){
+    let characterData = props.characterInfo.find( character => {
+      if(character.name === props.name){
+        return character
+      }
+    })
+    let movieWrapper = document.getElementById(props.url)
+    let movieSubHeaderText = document.createTextNode('Movies List:')
+    let moviesListHeader = movieWrapper.appendChild(movieSubHeaderText)
+    let characterFilms = characterData.filmData;
+    console.log(characterFilms);
 
-      })
-      //console.log(filmList)
-      return document.getElementById(props.url).innerHTML= filmList
-    } 
-    
-    onDisplay = false
-    //return document.getElementById(props.url).innerHTML = ''
+    if(characterData && !onDisplay){
+      onDisplay = true
+      document.getElementById(props.url).prepend(moviesListHeader)
+      console.log(onDisplay)
+      characterFilms.forEach(film => {
+        let filmContainer = document.createElement('li')
+        let filmText = document.createTextNode(`${film.title}`)
+        document.getElementById(props.url).appendChild(filmContainer)
+        filmContainer.appendChild(filmText)
+      } )
+    }else{
+      onDisplay = false
+      console.log(onDisplay)
+      document.getElementById(props.url).innerHTML = ''
+    }
+
   }
 
   return (
