@@ -11,24 +11,20 @@ class App extends Component {
     this.characters = charactersData.characters.map( character => 
       ({name: character.name, 
         characterUrl: character.url, 
-        filmUrls: [],
-        filmData: []
+        filmUrls: []
       }))
-  }
-
-  
+    }
+    
   displayCharacterCards(){
     return this.characters.map( person => {
       return <Characters key={person.name} 
                 name={person.name} 
                 url={person.characterUrl} 
-                characterInfo={this.characters}
                 />
   })
 }
 
   render() {
-    // this.getCharacterData()
     return (
       <div>
         <header>

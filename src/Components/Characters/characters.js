@@ -1,89 +1,112 @@
 import React from 'react';
-import { CardActions, Card, Button, Typography, CardContent } from '@material-ui/core';
-function Characters(props){
-  let onDisplay = false
-  
+import { CardActions, Card, Button, Typography, CardContent, Grid } from '@material-ui/core';
 
-  function handleClick(){
-    props.characterInfo.forEach( character => {
-      if(props.name === character.name){
-        if(character.filmData.length <= 1){
-        fetch( character.characterUrl)
-        .then( response => response.json() )
-        .then( data => {
-          character.filmUrls.push(data.films)  
-          return data.films
-        }).then ( filmUrls => {
-            filmUrls.forEach( url => {
-              fetch( url )
-                .then( response => response.json() )
-                .then( data => {
-                  data.release_date = new Date( data.release_date )
-                  character.filmData.push({title : data.title, releaseDate: data.release_date.toDateString()})
-                }).then(() => showCharacterData())
-              })
+class Characters extends React.Component {
+  constructor(props){
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+    this.checkDisplay = this.checkDisplay.bind(this)
+    this.state = {
+      name: props.name,
+      characterUrl: props.url,
+      filmUrls: [],
+      filmData: [],
+      onDisplay: false
+    }
+  }
 
+  checkDisplay(){
+    if( this.state.onDisplay === false ){
+      this.setState({onDisplay: true})
+      return true
+    }else {
+      this.setState({onDisplay: false})
+      return false
+    }
+  }
+
+  handleClick(callback){
+    if(this.state.filmData.length < 1){
+      fetch( this.state.characterUrl)
+      .then( response => response.json() )
+      .then( data => {
+        this.setState({
+          filmUrls: data.films
+        })
+        return data.films
+      })
+      .then ( filmUrls => {
+        filmUrls.forEach( url => {
+          fetch( url )
+          .then( response => response.json() )
+          .then( data => {
+            data.release_date = new Date( data.release_date )
+            this.setState( prevState => ({
+              filmData: [...prevState.filmData, `<li>Title : ${data.title} &amp; Release Date: ${data.release_date.toDateString()}</li>`],
+          }))
+            return data
           })
-        } else {
-          showCharacterData()
-        }
+        })
+      })
+      .then( () => {
+          callback()
+          this.checkDisplay()
+      })
+      .catch( () => {
+        callback()
+        this.checkDisplay()
+      })
+      }else{
+        callback()
+        this.checkDisplay()
       }
-    })
 
   }
 
 
-async function showCharacterData(){
-    let characterData = props.characterInfo.find( character => {
-      if(character.name === props.name){
-        return character
-      }
-    })
-    let movieWrapper = document.getElementById(props.url)
-    let movieSubHeaderText = document.createTextNode('Movies List:')
-    let moviesListHeader = movieWrapper.appendChild(movieSubHeaderText)
-    let characterFilms = characterData.filmData;
-    console.log(characterFilms);
+  
 
-    if(characterData && !onDisplay){
-      onDisplay = true
-      document.getElementById(props.url).prepend(moviesListHeader)
-      console.log(onDisplay)
-      characterFilms.forEach(film => {
-        let filmContainer = document.createElement('li')
-        let filmText = document.createTextNode(`${film.title}`)
-        document.getElementById(props.url).appendChild(filmContainer)
-        filmContainer.appendChild(filmText)
-      } )
-    }else{
-      onDisplay = false
-      console.log(onDisplay)
-      document.getElementById(props.url).innerHTML = ''
+render(){
+  const { name , characterUrl, filmData, onDisplay } = this.state
+  
+  function showCharacterData(){
+    let movieWrapper = document.getElementById( characterUrl )
+    let filmList =  filmData.map( film => {
+      return movieWrapper.insertAdjacentHTML('beforeend', film)
+    })
+    if(filmList.length > 0 && !onDisplay){
+      let movieSubHeaderText = document.createTextNode( 'Movies List:' )
+      movieWrapper.prepend( movieSubHeaderText )
+      return filmList
+    }else {
+      if(filmData.length === 0){
+        return movieWrapper.innerText = 'Sorry, We can not find movie data for this charcter.'
+      }
+      movieWrapper.innerHTML = ''
     }
 
   }
-
   return (
-          <div>
-            <Card>
-              <CardContent>
-                <Typography variant='display2'>
-                  {props.name}
-                </Typography>
-                <Typography id={props.name} component='article'>
-                  <ul id={props.url}>
+    <Grid>
+      <Card>
+        <CardContent>
+          <Typography variant='display2'>
+            {name}
+          </Typography>
+          <Typography id={name} component='article'>
+            <ul id={characterUrl}>
 
-                  </ul>
-                </Typography>
-                <CardActions>
-                  <div onClick={handleClick}  value={props.name}>
-                  <Button component='button' variant='contained' color='primary'>List Movies</Button>
-                  </div>
-                </CardActions>
-              </CardContent>
-            </Card>
-          </div>
+            </ul>
+          </Typography>
+          <CardActions>
+            <Button onClick={()=>this.handleClick(showCharacterData)} name={name} variant='contained' color='primary' fullWidth={true}>List Movies</Button>
+          </CardActions>
+        </CardContent>
+      </Card>
+    </Grid>
 
-          )
+    )
+}
+  
 } 
 export default Characters
