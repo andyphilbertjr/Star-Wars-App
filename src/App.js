@@ -16,12 +16,8 @@ class App extends Component {
     }
     
   displayCharacterCards(){
-    return this.characters.map( person => {
-      return <Characters key={person.name} 
-                name={person.name} 
-                url={person.characterUrl} 
-                />
-  })
+    return this.characters.map( person => 
+      <Characters key={person.name} name={person.name} url={person.characterUrl} />)
 }
 
   render() {
@@ -37,7 +33,6 @@ class App extends Component {
         <Grid container justify='center'>
           {this.displayCharacterCards()}
         </Grid>
-
       </div>
     );
   }

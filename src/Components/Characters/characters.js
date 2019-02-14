@@ -16,13 +16,8 @@ class Characters extends React.Component {
   }
 
   checkDisplay(){
-    if( this.state.onDisplay === false ){
-      this.setState({onDisplay: true})
-      return true
-    }else {
-      this.setState({onDisplay: false})
-      return false
-    }
+    this.state.onDisplay === false ? this.setState({onDisplay: true})
+      : this.setState({onDisplay: false})
   }
 
   handleClick(callback){
@@ -30,9 +25,7 @@ class Characters extends React.Component {
       fetch( this.state.characterUrl)
       .then( response => response.json() )
       .then( data => {
-        this.setState({
-          filmUrls: data.films
-        })
+        this.setState({filmUrls: data.films})
         return data.films
       })
       .then ( filmUrls => {
@@ -56,7 +49,7 @@ class Characters extends React.Component {
         callback()
         this.checkDisplay()
       })
-        }else{
+      }else{
           callback()
           this.checkDisplay()
         }
@@ -70,9 +63,7 @@ render(){
   
   function showCharacterData(){
     let movieWrapper = document.getElementById( characterUrl )
-    let filmList =  filmData.map( film => {
-      return movieWrapper.insertAdjacentHTML('beforeend', film)
-    })
+    let filmList =  filmData.map( film => movieWrapper.insertAdjacentHTML('beforeend', film))
     if(filmList.length > 0 && !onDisplay){
       let movieSubHeaderText = document.createTextNode( 'Movies List:' )
       movieWrapper.prepend( movieSubHeaderText )
@@ -80,14 +71,14 @@ render(){
     }else {
       if(characterUrl.includes('unknown')){
         if(onDisplay){
-          return movieWrapper.innerHTML = ''
+          return movieWrapper.innerHTML = '' 
         }
-        return movieWrapper.innerText = 'Sorry, We can not find movie data for this charcter.'
+         return movieWrapper.innerText = 'Sorry, We can not find movie data for this charcter.'
       }
       return movieWrapper.innerHTML = ''
     }
-
   }
+
   return (
     <Grid item lg={12} md={6} sm={3}>
       <Card>
