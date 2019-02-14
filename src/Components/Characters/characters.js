@@ -11,13 +11,20 @@ class Characters extends React.Component {
       characterUrl: props.url,
       filmUrls: [],
       filmData: [],
-      onDisplay: false
+      onDisplay: false, 
+      btnColor: 'primary'
     }
   }
 
   checkDisplay(){
-    this.state.onDisplay === false ? this.setState({onDisplay: true})
-      : this.setState({onDisplay: false})
+    this.state.onDisplay === false ? this.setState({
+      onDisplay: true,
+      btnColor: 'secondary'
+    })
+      : this.setState({
+        onDisplay: false,
+        btnColor: 'primary'
+      })
   }
 
   handleClick(callback){
@@ -35,7 +42,7 @@ class Characters extends React.Component {
           .then( data => {
             data.release_date = new Date( data.release_date )
             this.setState( prevState => ({
-              filmData: [...prevState.filmData, `<li>Title : ${data.title} &amp; Release Date: ${data.release_date.toDateString()}</li>`],
+              filmData: [...prevState.filmData, `<li>Title : ${data.title} &amp; Release Date: ${data.release_date.toDateString()}</li>`]
           }))
             return data
           })
@@ -59,7 +66,7 @@ class Characters extends React.Component {
   
 
 render(){
-  const { name , characterUrl, filmData, onDisplay } = this.state
+  const { name , characterUrl, filmData, onDisplay, btnColor } = this.state
   
   function showCharacterData(){
     let movieWrapper = document.getElementById( characterUrl )
@@ -96,7 +103,7 @@ render(){
           </Grid>
           <Grid container justify='center'>
             <CardActions>
-              <Button onClick={()=>this.handleClick(showCharacterData)} name={name} variant='contained' color='primary' fullWidth={true}>List Movies</Button>
+              <Button onClick={()=>this.handleClick(showCharacterData)} name={name} variant='contained' color={btnColor} fullWidth={true}>List Movies</Button>
             </CardActions>
           </Grid>
         </CardContent>
