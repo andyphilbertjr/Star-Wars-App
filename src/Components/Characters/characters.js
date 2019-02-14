@@ -79,7 +79,7 @@ render(){
       movieWrapper.prepend( movieSubHeaderText )
       return filmList
     }else {
-      if(filmData.length === 0){
+      if(characterUrl.includes('unknown')){
         return movieWrapper.innerText = 'Sorry, We can not find movie data for this charcter.'
       }
       movieWrapper.innerHTML = ''
