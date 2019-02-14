@@ -56,11 +56,10 @@ class Characters extends React.Component {
         callback()
         this.checkDisplay()
       })
-      }else{
-        callback()
-        this.checkDisplay()
-      }
-
+        }else{
+          callback()
+          this.checkDisplay()
+        }
   }
 
 
@@ -80,27 +79,35 @@ render(){
       return filmList
     }else {
       if(characterUrl.includes('unknown')){
+        if(onDisplay){
+          return movieWrapper.innerHTML = ''
+        }
         return movieWrapper.innerText = 'Sorry, We can not find movie data for this charcter.'
       }
-      movieWrapper.innerHTML = ''
+      return movieWrapper.innerHTML = ''
     }
 
   }
   return (
-    <Grid>
+    <Grid item lg={12} md={6} sm={3}>
       <Card>
-        <CardContent>
-          <Typography variant='display2'>
-            {name}
-          </Typography>
-          <Typography id={name} component='article'>
-            <ul id={characterUrl}>
-
-            </ul>
-          </Typography>
-          <CardActions>
-            <Button onClick={()=>this.handleClick(showCharacterData)} name={name} variant='contained' color='primary' fullWidth={true}>List Movies</Button>
-          </CardActions>
+        <CardContent >
+          <Grid container justify='center'>
+            <Typography variant='subtitle1'>
+              {name}
+            </Typography>
+          </Grid>
+          <Grid container justify='center'>
+            <Typography id={name} component='article'>
+              <ul id={characterUrl}>
+              </ul>
+            </Typography>
+          </Grid>
+          <Grid container justify='center'>
+            <CardActions>
+              <Button onClick={()=>this.handleClick(showCharacterData)} name={name} variant='contained' color='primary' fullWidth={true}>List Movies</Button>
+            </CardActions>
+          </Grid>
         </CardContent>
       </Card>
     </Grid>

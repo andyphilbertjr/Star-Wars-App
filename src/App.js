@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Typography } from '@material-ui/core';
+import { Typography, Grid } from '@material-ui/core';
 import Characters from './Components/Characters/characters'
 const charactersData = require('./characters.json')
 
@@ -27,12 +27,17 @@ class App extends Component {
   render() {
     return (
       <div>
-        <header>
-          <Typography variant={"display3"}>
-            Star Wars App
-          </Typography>
-        </header>
-        {this.displayCharacterCards()}
+        <Grid container justify='center'>
+          <header>
+            <Typography variant={"display3"}>
+              Star Wars App
+            </Typography>
+          </header>
+        </Grid>
+        <Grid container justify='center'>
+          {this.displayCharacterCards()}
+        </Grid>
+
       </div>
     );
   }
